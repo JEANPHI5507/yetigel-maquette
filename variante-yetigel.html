@@ -1,0 +1,829 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Yetigel ADV — Maquette espaces</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Sora:wght@300;400;500;600;700&display=swap">
+<style>
+/* Layout : coquille d'app — barre latérale d'espaces par métier + zone de travail à onglets.
+   Design system Yetigel (CLAUDE.md) : sombre par défaut, accent cyan, DM Serif Display + Sora. */
+:root{
+  --bg:#060f1e; --surface:#0a1628; --elev:#0d1f35; --border:#1a3a55;
+  --fg:#e3eef7; --muted:#89a3ba; --faint:#5d7a93;
+  --accent:#00B4D8; --accent-ink:#04121f; --accent-soft:rgba(0,180,216,.14);
+  --pos:#00e676; --neg:#ff6b6b; --warn:#ffd54f;
+  --pos-soft:rgba(0,230,118,.13); --neg-soft:rgba(255,107,107,.14); --warn-soft:rgba(255,213,79,.14);
+  --shadow:0 10px 30px rgba(0,0,0,.35);
+  --f-display:"DM Serif Display", Georgia, "Times New Roman", serif;
+  --f-body:"Sora", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#f2f6f9; --surface:#ffffff; --elev:#e9f0f5; --border:#cfdce6;
+    --fg:#0b1f33; --muted:#52687d; --faint:#7d93a6;
+    --accent:#0089a6; --accent-ink:#ffffff; --accent-soft:rgba(0,137,166,.10);
+    --pos:#0a8a4a; --neg:#c33a3a; --warn:#946400;
+    --pos-soft:rgba(10,138,74,.10); --neg-soft:rgba(195,58,58,.10); --warn-soft:rgba(148,100,0,.12);
+    --shadow:0 10px 30px rgba(11,31,51,.10);
+    color-scheme:light;
+  }
+}
+:root[data-theme="light"]{
+  --bg:#f2f6f9; --surface:#ffffff; --elev:#e9f0f5; --border:#cfdce6;
+  --fg:#0b1f33; --muted:#52687d; --faint:#7d93a6;
+  --accent:#0089a6; --accent-ink:#ffffff; --accent-soft:rgba(0,137,166,.10);
+  --pos:#0a8a4a; --neg:#c33a3a; --warn:#946400;
+  --pos-soft:rgba(10,138,74,.10); --neg-soft:rgba(195,58,58,.10); --warn-soft:rgba(148,100,0,.12);
+  --shadow:0 10px 30px rgba(11,31,51,.10);
+  color-scheme:light;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14px;line-height:1.5;
+  -webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--surface)}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+.num{font-variant-numeric:tabular-nums}
+h1,h2,h3{text-wrap:balance;margin:0}
+
+/* ── Coquille ── */
+.app{display:grid;grid-template-columns:248px minmax(0,1fr);min-height:100%}
+.side{background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;
+  position:sticky;top:0;height:100vh;padding-block:18px;padding-left:max(14px,env(safe-area-inset-left,0px));padding-right:14px}
+.brand{display:flex;align-items:baseline;gap:8px;padding:0 6px 16px;border-bottom:1px solid var(--border)}
+.brand b{font-family:var(--f-display);font-weight:400;font-size:26px;letter-spacing:.01em}
+.brand span{font-size:10.5px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted)}
+.nav{display:flex;flex-direction:column;gap:2px;margin-top:14px;overflow-y:auto}
+.nav-label{font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--faint);padding:10px 8px 4px}
+.nav a{display:grid;grid-template-columns:20px 1fr auto;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;
+  color:var(--muted);text-decoration:none;border:1px solid transparent}
+.nav a:hover{background:var(--elev);color:var(--fg)}
+.nav a.on{background:var(--accent-soft);color:var(--fg);border-color:color-mix(in srgb,var(--accent) 35%,transparent)}
+.nav a.on svg{color:var(--accent)}
+.nav a small{display:block;font-size:11px;color:var(--faint);line-height:1.3;margin-top:1px}
+.nav .cnt{font-size:11px;font-weight:600;min-width:22px;text-align:center;padding:1px 6px;border-radius:999px;background:var(--elev);color:var(--fg)}
+.nav .cnt.hot{background:var(--neg-soft);color:var(--neg)}
+.side-foot{margin-top:auto;border-top:1px solid var(--border);padding:14px 6px 0;display:flex;flex-direction:column;gap:8px}
+.audit-note{font-size:11.5px;color:var(--muted);line-height:1.45}
+.audit-note b{color:var(--fg);font-weight:600}
+
+.main{min-width:0;display:flex;flex-direction:column}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);
+  backdrop-filter:blur(8px);border-bottom:1px solid var(--border);
+  padding-block:12px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.burger{display:none;background:var(--elev);border:1px solid var(--border);border-radius:8px;padding:7px 9px}
+.search{flex:1 1 260px;min-width:0;position:relative}
+.search input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:9px 12px 9px 36px;
+  color:var(--fg);font:inherit}
+.search input::placeholder{color:var(--faint)}
+.search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--faint)}
+.search kbd{position:absolute;right:10px;top:50%;transform:translateY(-50%);font:600 10px var(--f-body);color:var(--faint);
+  border:1px solid var(--border);border-radius:5px;padding:1px 5px}
+.results{position:absolute;left:0;right:0;top:calc(100% + 6px);background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;box-shadow:var(--shadow);padding:6px;max-height:360px;overflow:auto}
+.results button{display:grid;grid-template-columns:86px 1fr auto;gap:10px;width:100%;text-align:left;background:none;border:0;
+  padding:8px 10px;border-radius:8px;align-items:center}
+.results button:hover,.results button.sel{background:var(--elev)}
+.results .kind{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--accent)}
+.results .empty{padding:12px;color:var(--muted);font-size:13px}
+.role{display:flex;align-items:center;gap:8px}
+.role label{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--faint)}
+select{background:var(--surface);color:var(--fg);border:1px solid var(--border);border-radius:9px;padding:8px 10px;font:inherit}
+.iconbtn{background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:7px 10px;display:inline-flex;align-items:center;gap:6px}
+.mock{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.12em;color:var(--warn);background:var(--warn-soft);
+  border-radius:999px;padding:4px 10px;white-space:nowrap}
+
+.page{padding-block:22px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  max-width:1320px;width:100%;display:flex;flex-direction:column;gap:18px}
+.head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.eyebrow{font-size:10.5px;text-transform:uppercase;letter-spacing:.16em;color:var(--accent);font-weight:600}
+.head h1{font-family:var(--f-display);font-weight:400;font-size:clamp(26px,3.2vw,36px);line-height:1.1;margin-top:4px}
+.head p{margin:6px 0 0;color:var(--muted);max-width:68ch}
+
+.why{border:1px dashed color-mix(in srgb,var(--accent) 45%,var(--border));border-radius:12px;background:var(--accent-soft)}
+.why summary{cursor:pointer;padding:10px 14px;font-size:12.5px;font-weight:600;color:var(--fg);list-style:none;display:flex;gap:8px;align-items:center}
+.why summary::-webkit-details-marker{display:none}
+.why summary::before{content:"+";display:inline-grid;place-items:center;width:18px;height:18px;border-radius:5px;background:var(--accent);color:var(--accent-ink);font-size:13px}
+.why[open] summary::before{content:"–"}
+.why ul{margin:0;padding:0 16px 12px 40px;color:var(--muted);font-size:13px;display:grid;gap:4px}
+.why b{color:var(--fg);font-weight:600}
+
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:thin}
+.tabs button{background:none;border:0;border-bottom:2px solid transparent;padding:10px 14px;color:var(--muted);white-space:nowrap;font-weight:500}
+.tabs button:hover{color:var(--fg)}
+.tabs button.on{color:var(--fg);border-bottom-color:var(--accent)}
+
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.split{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr)}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;min-width:0}
+.panel h2{font-size:13px;font-weight:600;letter-spacing:.02em;display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}
+.panel h2 .link{font-size:12px;font-weight:500;color:var(--accent);background:none;border:0;padding:0}
+
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.kpi .l{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+.kpi .v{font-family:var(--f-display);font-size:28px;line-height:1.1}
+.kpi .d{font-size:12px;color:var(--muted)}
+.up{color:var(--pos)} .down{color:var(--neg)}
+
+/* À traiter */
+.todo{display:flex;flex-direction:column}
+.todo button{display:grid;grid-template-columns:4px 54px 1fr auto;gap:12px;align-items:center;text-align:left;background:none;border:0;
+  border-bottom:1px solid var(--border);padding:12px 4px}
+.todo button:last-child{border-bottom:0}
+.todo button:hover{background:var(--elev)}
+.todo .sev{align-self:stretch;border-radius:4px}
+.sev.crit{background:var(--neg)} .sev.warn{background:var(--warn)} .sev.ok{background:var(--accent)}
+.todo .n{font-family:var(--f-display);font-size:26px;line-height:1;text-align:right}
+.todo .t{font-weight:500}
+.todo .s{font-size:12px;color:var(--muted)}
+.todo .go{font-size:12px;color:var(--accent);white-space:nowrap}
+
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:2px 9px;border-radius:999px;white-space:nowrap}
+.chip.pos{background:var(--pos-soft);color:var(--pos)} .chip.neg{background:var(--neg-soft);color:var(--neg)}
+.chip.warn{background:var(--warn-soft);color:var(--warn)} .chip.info{background:var(--accent-soft);color:var(--accent)}
+.chip.mute{background:var(--elev);color:var(--muted)}
+.locked{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;color:var(--muted);background:var(--elev);border:1px solid var(--border);
+  border-radius:999px;padding:2px 9px}
+
+.tbl{overflow-x:auto;border:1px solid var(--border);border-radius:12px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600;text-align:left;padding:10px 12px;
+  background:var(--elev);border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:color-mix(in srgb,var(--elev) 60%,transparent)}
+td.r,th.r{text-align:right}
+.code{font-size:11.5px;color:var(--muted);letter-spacing:.03em}
+.bar{height:6px;border-radius:999px;background:var(--elev);overflow:hidden;min-width:70px}
+.bar i{display:block;height:100%;border-radius:999px;background:var(--accent)}
+.bar i.w{background:var(--warn)} .bar i.c{background:var(--neg)} .bar i.p{background:var(--pos)}
+
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.fchip{background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:5px 12px;font-size:12.5px;color:var(--muted)}
+.fchip.on{background:var(--accent-soft);border-color:var(--accent);color:var(--fg)}
+.seg{display:inline-flex;background:var(--elev);border:1px solid var(--border);border-radius:10px;padding:3px}
+.seg button{background:none;border:0;border-radius:7px;padding:6px 12px;font-size:12.5px;color:var(--muted)}
+.seg button.on{background:var(--surface);color:var(--fg);box-shadow:0 1px 2px rgba(0,0,0,.2)}
+
+/* Fiche 360 */
+.ident{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.mono{width:52px;height:52px;border-radius:12px;display:grid;place-items:center;font-family:var(--f-display);font-size:22px;
+  background:var(--accent-soft);color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 40%,transparent)}
+.crumb{font-size:12px;color:var(--muted);display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.crumb button{background:none;border:0;padding:0;color:var(--accent)}
+.cascade{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:8px}
+.step{background:var(--elev);border:1px solid var(--border);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:4px}
+.step .l{font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+.step .v{font-size:18px;font-weight:600}
+.step.total{border-color:color-mix(in srgb,var(--accent) 55%,transparent);background:var(--accent-soft)}
+.note{font-size:12px;color:var(--muted);margin:10px 0 0}
+
+/* Kanban finance */
+.lanes{display:grid;grid-template-columns:repeat(4,minmax(220px,1fr));gap:12px;overflow-x:auto;padding-bottom:4px}
+.lane{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.lane h3{font-size:12.5px;font-weight:600;display:flex;justify-content:space-between}
+.card{background:var(--elev);border:1px solid var(--border);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:4px}
+.card .a{display:flex;justify-content:space-between;gap:8px;font-size:13px;font-weight:500}
+.card .b{font-size:11.5px;color:var(--muted);display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+
+/* Semaine présences */
+.week{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.day{background:var(--elev);border:1px solid var(--border);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:6px;min-height:84px}
+.day .dn{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+.day.today{border-color:var(--accent)}
+
+/* Terminal inventaire */
+.phone{width:min(240px,100%);aspect-ratio:9/16;max-width:100%;border:1px solid var(--border);border-radius:24px;background:var(--bg);padding:16px 12px;
+  display:flex;flex-direction:column;gap:10px;margin-inline:auto}
+.phone .scan{border:2px dashed var(--accent);border-radius:12px;padding:16px 10px;text-align:center;color:var(--muted);font-size:12px}
+.phone .big{font-family:var(--f-display);font-size:30px;text-align:center}
+
+.chart{width:100%;height:auto;display:block}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--muted);flex-wrap:wrap}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+
+.btn{background:var(--accent);color:var(--accent-ink);border:0;border-radius:9px;padding:8px 14px;font-weight:600;font-size:13px}
+.btn.ghost{background:var(--surface);color:var(--fg);border:1px solid var(--border)}
+.toast{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:40;
+  background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:10px;padding:10px 14px;box-shadow:var(--shadow);font-size:13px;max-width:min(360px,calc(100vw - 32px))}
+
+@media (max-width:1100px){ .g4{grid-template-columns:repeat(2,minmax(0,1fr))} .split{grid-template-columns:minmax(0,1fr)} }
+@media (max-width:860px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  .side{position:fixed;inset:0 auto 0 0;width:min(280px,86vw);z-index:35;transform:translateX(-102%);transition:transform .2s ease;
+    padding-top:calc(18px + env(safe-area-inset-top,0px));padding-bottom:calc(18px + env(safe-area-inset-bottom,0px));box-shadow:var(--shadow)}
+  .side.open{transform:none}
+  .burger{display:inline-flex}
+  .g2,.g3{grid-template-columns:minmax(0,1fr)}
+  .search kbd{display:none}
+}
+@media (max-width:520px){ .g4{grid-template-columns:minmax(0,1fr)} .week{grid-template-columns:repeat(2,minmax(0,1fr))} .mock{display:none} }
+@media (prefers-reduced-motion:reduce){ *{transition:none!important} }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <aside class="side" id="side" aria-label="Espaces">
+    <div class="brand"><b>Yetigel</b><span>ADV</span></div>
+    <nav class="nav" id="nav"></nav>
+    <div class="side-foot">
+      <div class="audit-note" id="auditNote"></div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="top">
+      <button class="burger" id="burger" aria-label="Ouvrir le menu">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+      <div class="search">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="q" type="search" autocomplete="off" placeholder="Chercher un article, une enseigne, une commande…" aria-label="Recherche globale">
+        <kbd>Ctrl K</kbd>
+        <div class="results" id="results" hidden></div>
+      </div>
+      <div class="role">
+        <label for="roleSel">Vu par</label>
+        <select id="roleSel"></select>
+      </div>
+      <button class="iconbtn" id="themeBtn" aria-label="Basculer clair / sombre">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+        <span id="themeLbl">Clair</span>
+      </button>
+      <span class="mock">Maquette · données fictives</span>
+    </header>
+    <main class="page" id="page"></main>
+  </div>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+/* ═════════ Données fictives (enseignes, produits et montants inventés) ═════════ */
+const ICON = {
+  accueil:'<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+  clients:'<path d="M3 21V8l7-5 7 5v13"/><path d="M10 21v-5h4v5"/><path d="M17 12h4v9h-4"/>',
+  ventes:'<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>',
+  produits:'<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/>',
+  logistique:'<rect x="2" y="6" width="13" height="11" rx="1"/><path d="M15 10h4l3 3v4h-7"/><circle cx="6.5" cy="18.5" r="1.8"/><circle cx="18" cy="18.5" r="1.8"/>',
+  finance:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/>',
+  terrain:'<path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
+  direction:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+  moi:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  admin:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>'
+};
+const svg = (k, s=16) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICON[k]}</svg>`;
+const LOCK = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
+
+const SPACES = {
+  accueil:   {label:'Mon poste',          hint:'Ce que j’ai à traiter'},
+  direction: {label:'Direction',          hint:'Synthèse en lecture'},
+  clients:   {label:'Clients',            hint:'Fiche 360°, accords, AO, contrats'},
+  ventes:    {label:'Ventes & Commandes', hint:'CA, commandes, Aldi & Lidl'},
+  produits:  {label:'Produits',           hint:'Articles, qualité, forecast'},
+  logistique:{label:'Logistique',         hint:'Stock, DLUO, inventaire'},
+  finance:   {label:'Finance & Litiges',  hint:'NIP, pénalités, relances, BV'},
+  terrain:   {label:'Terrain',            hint:'Visites, DN, prix en rayon'},
+  moi:       {label:'Mon espace',         hint:'Présences, dossier RH'},
+  admin:     {label:'Administration',     hint:'Utilisateurs, paramètres'}
+};
+
+// Les phrases « Aujourd'hui » reprennent les chiffres réels de l'audit du 17/11/2026 (agrégats, sans nom).
+const ROLES = {
+  adv:       {label:'ADV',          home:'accueil',  spaces:['accueil','clients','ventes','produits','logistique','finance','terrain','moi'],
+              today:'<b>Aujourd’hui :</b> 14 à 31 entrées de menu selon le compte, environ 60 % ouvertes en 60 jours.'},
+  compta:    {label:'Comptabilité', home:'accueil',  spaces:['accueil','finance','ventes','clients','logistique','moi'],
+              today:'<b>Aujourd’hui :</b> 4 ou 15 entrées selon le compte, définies une par une.'},
+  qualite:   {label:'Qualité',      home:'accueil',  spaces:['accueil','produits','logistique','moi'],
+              today:'<b>Aujourd’hui :</b> 2 à 7 entrées, presque toutes utilisées. C’est le modèle à suivre.'},
+  logistique:{label:'Logistique',   home:'accueil',  spaces:['accueil','logistique','ventes','produits','moi'],
+              today:'<b>Aujourd’hui :</b> 9 à 18 entrées, presque toutes utilisées.'},
+  direction: {label:'Direction',    home:'direction',spaces:['direction','clients','ventes','logistique','finance','moi'],
+              today:'<b>Aujourd’hui :</b> 30 entrées, une Vue Direction bloquée, aucune connexion en 30 jours.'},
+  salarie:   {label:'Salarié',      home:'moi',      spaces:['moi'],
+              today:'<b>Aujourd’hui :</b> 7 comptes, 5 jamais connectés, aucune activité.'},
+  admin:     {label:'Admin (JP)',   home:'accueil',  spaces:['accueil','direction','clients','ventes','produits','logistique','finance','terrain','moi','admin'],
+              today:'<b>Aujourd’hui :</b> 42 à 47 entrées de menu.'}
+};
+
+const ENSEIGNES = [
+  {id:'hno', nom:'Hyper Nord-Ouest',  groupe:'Groupe Altis',  niveau:'Centrale régionale', ca:1842300, n1:1710450, obj:2400000, pen:18420, dn:72, mag:184},
+  {id:'mdc', nom:'Marché des Côtes',  groupe:'Coop Sud-Est',  niveau:'Centrale régionale', ca:1206800, n1:1288100, obj:1500000, pen:9310,  dn:64, mag:142},
+  {id:'prl', nom:'Proxi Littoral',    groupe:'Groupe Altis',  niveau:'Proximité',          ca:486200,  n1:432900,  obj:620000,  pen:2140,  dn:48, mag:311},
+  {id:'svl', nom:'Super Vallée',      groupe:'Union Centre',  niveau:'Supermarchés',       ca:932700,  n1:901300,  obj:1100000, pen:12880, dn:69, mag:97},
+  {id:'hge', nom:'Halles du Grand Est',groupe:'Union Centre', niveau:'Hypermarchés',       ca:1418900, n1:1262000, obj:1650000, pen:6020,  dn:77, mag:58}
+];
+const MONTHS = ['Jan','Fév','Mar','Avr','Mai','Juin','Juil','Août','Sep','Oct','Nov'];
+const CA_M = { // k€ par mois, N et N-1
+  hno:{n:[98,104,121,152,198,241,262,231,179,152,104], p:[92,99,118,141,181,226,245,214,171,139,84]},
+  mdc:{n:[71,69,82,104,131,158,171,149,119,93,59],     p:[78,77,90,112,140,163,180,158,126,99,65]},
+  prl:{n:[25,27,31,40,52,66,74,63,48,36,24],           p:[22,24,28,36,46,58,66,57,43,32,21]},
+  svl:{n:[52,54,61,79,99,121,130,113,88,77,59],        p:[51,53,60,76,96,117,126,110,86,72,54]},
+  hge:{n:[77,80,92,118,149,183,198,175,138,121,88],    p:[69,72,83,106,133,163,176,155,123,106,76]}
+};
+const ACCORDS = {
+  hno:{cat:'Glaces', debut:'01/01/2026', fin:'31/12/2026', statut:'Signé',      r1:4.0, r2:6.5, r3:1.5, coop:3.0, rfa:2.5, promo:1.8, frais:0.9},
+  mdc:{cat:'Glaces', debut:'01/03/2026', fin:'28/02/2027', statut:'Signé',      r1:4.0, r2:5.0, r3:2.0, coop:2.5, rfa:2.0, promo:2.2, frais:0.7},
+  prl:{cat:'Glaces', debut:'01/01/2026', fin:'31/12/2026', statut:'En révision',r1:3.5, r2:4.0, r3:1.0, coop:1.5, rfa:1.0, promo:0.9, frais:0.5},
+  svl:{cat:'Glaces', debut:'01/02/2026', fin:'31/01/2027', statut:'Signé',      r1:4.0, r2:6.0, r3:1.0, coop:2.0, rfa:1.5, promo:1.4, frais:0.8},
+  hge:{cat:'Glaces', debut:'01/01/2026', fin:'31/12/2026', statut:'Signé',      r1:4.5, r2:6.0, r3:2.5, coop:3.5, rfa:3.0, promo:2.6, frais:1.1}
+};
+const ARTICLES = [
+  {code:'CNV4VAN', nom:'Cône vanille ×4',            fam:'Cônes',     statut:'Validé',   comp:100, gtin:true,  stock:1840, dluo:'14/08/2027', stk:'Entrepôt Ouest'},
+  {code:'BAT6CHO', nom:'Bâtonnet chocolat ×6',       fam:'Bâtonnets', statut:'Validé',   comp:96,  gtin:true,  stock:2260, dluo:'02/06/2027', stk:'Entrepôt Ouest'},
+  {code:'POT5FRA', nom:'Pot fraise 500 ml',          fam:'Pots',      statut:'À valider',comp:88,  gtin:true,  stock:640,  dluo:'21/03/2027', stk:'Plateforme Sud'},
+  {code:'MOC12MG', nom:'Mochi mangue ×12',           fam:'Desserts',  statut:'Incomplet',comp:61,  gtin:false, stock:0,    dluo:'—',          stk:'—'},
+  {code:'BUC8PIS', nom:'Bûche pistache 8 parts',     fam:'Desserts',  statut:'À valider',comp:79,  gtin:true,  stock:310,  dluo:'09/01/2027', stk:'Dépôt froid Centre'},
+  {code:'SOR1CIT', nom:'Sorbet citron 1 L',          fam:'Sorbets',   statut:'Validé',   comp:100, gtin:true,  stock:95,   dluo:'30/12/2026', stk:'Plateforme Sud'},
+  {code:'ESK10CR', nom:'Esquimau caramel ×10',       fam:'Bâtonnets', statut:'Validé',   comp:92,  gtin:true,  stock:1120, dluo:'18/09/2027', stk:'Entrepôt Ouest'},
+  {code:'BOX24AS', nom:'Box cônes assortis ×24',     fam:'Cônes',     statut:'Incomplet',comp:54,  gtin:false, stock:72,   dluo:'05/02/2027', stk:'Dépôt froid Centre'},
+  {code:'POT1CAF', nom:'Pot café 1 L',               fam:'Pots',      statut:'Validé',   comp:98,  gtin:true,  stock:410,  dluo:'11/12/2026', stk:'Plateforme Sud'}
+];
+const COMMANDES = [
+  {num:'CMD-26-04812', ref:'HNO-55120', ens:'hno', date:'17/11', colis:420, montant:18920, statut:'En préparation'},
+  {num:'CMD-26-04809', ref:'HGE-2231',  ens:'hge', date:'17/11', colis:260, montant:11340, statut:'Confirmée'},
+  {num:'CMD-26-04801', ref:'SVL-0918',  ens:'svl', date:'16/11', colis:180, montant:7410,  statut:'Expédiée'},
+  {num:'CMD-26-04797', ref:'MDC-7740',  ens:'mdc', date:'15/11', colis:310, montant:13260, statut:'Livrée'},
+  {num:'CMD-26-04790', ref:'PRL-1402',  ens:'prl', date:'14/11', colis:64,  montant:2980,  statut:'Livrée'}
+];
+
+const TODO = {
+  adv:[
+    {sev:'crit', n:3,  t:'Pénalités à contester avant échéance', s:'La plus proche expire dans 2 jours · Super Vallée', go:'finance'},
+    {sev:'warn', n:2,  t:'Opérations promo qui démarrent cette semaine', s:'Hyper Nord-Ouest, Halles du Grand Est', go:'clients'},
+    {sev:'warn', n:4,  t:'Clients à relancer sans adresse email', s:'Relances impayés bloquées tant que l’email manque', go:'finance'},
+    {sev:'ok',   n:1,  t:'Accord en révision', s:'Proxi Littoral · échéance 31/12', go:'clients'}
+  ],
+  compta:[
+    {sev:'crit', n:7,  t:'Factures BV à valider avant envoi EDI', s:'Dépôt FTP en attente depuis 3 jours pour 2 d’entre elles', go:'finance'},
+    {sev:'warn', n:18, t:'Factures NIP à traiter', s:'12 rapprochées automatiquement, 6 à vérifier à l’œil', go:'finance'},
+    {sev:'warn', n:9,  t:'Relances impayés prêtes à envoyer', s:'Montant total 41 260 €', go:'finance'},
+    {sev:'ok',   n:2,  t:'Avoirs non affectés', s:'À rattacher à une facture', go:'finance'}
+  ],
+  qualite:[
+    {sev:'crit', n:2,  t:'Articles à valider', s:'Pot fraise 500 ml, Bûche pistache 8 parts', go:'produits'},
+    {sev:'warn', n:2,  t:'Fiches incomplètes sous 70 %', s:'GTIN manquant sur les deux', go:'produits'},
+    {sev:'ok',   n:6,  t:'Ingrédients sans allergènes renseignés', s:'Référentiel ingrédients', go:'produits'}
+  ],
+  logistique:[
+    {sev:'crit', n:2,  t:'Alertes DLUO à moins de 60 jours', s:'Sorbet citron 1 L, Pot café 1 L', go:'logistique'},
+    {sev:'warn', n:1,  t:'Inventaire dépôt en cours', s:'62 % des emplacements scannés', go:'logistique'},
+    {sev:'ok',   n:14, t:'Commandes à préparer pour demain', s:'2 120 colis au total', go:'ventes'}
+  ],
+  admin:[
+    {sev:'crit', n:3,  t:'Pénalités à contester avant échéance', s:'La plus proche expire dans 2 jours', go:'finance'},
+    {sev:'warn', n:2,  t:'Comptes sans activité depuis 60 jours', s:'À vérifier : départ, absence, doublon ?', go:'admin'},
+    {sev:'ok',   n:4,  t:'Demandes Wishbox nouvelles', s:'Boîte à idées des équipes', go:'admin'}
+  ]
+};
+
+/* ═════════ État ═════════ */
+const st = { role:'adv', tab:{}, ens:'hno', level:'enseigne', fam:'Toutes', stockView:'simple', theme:null };
+try { const r = localStorage.getItem('yt-maquette-role'); if (r && ROLES[r]) st.role = r; } catch(e){}
+
+const eur = v => v.toLocaleString('fr-FR',{maximumFractionDigits:0}) + ' €';
+const keur = v => (v/1000).toLocaleString('fr-FR',{maximumFractionDigits:0}) + ' k€';
+const pct = v => v.toLocaleString('fr-FR',{minimumFractionDigits:1,maximumFractionDigits:1}) + ' %';
+const evo = (a,b) => { const d=(a-b)/b*100; return `<span class="${d>=0?'up':'down'}">${d>=0?'+':''}${d.toLocaleString('fr-FR',{maximumFractionDigits:1})} %</span>`; };
+const ensById = id => ENSEIGNES.find(e=>e.id===id);
+const canRfa = () => st.role === 'admin';
+const isReadOnly = () => st.role === 'direction';
+
+function route(){
+  const h = (location.hash||'').slice(1);
+  const R = ROLES[st.role];
+  return R.spaces.includes(h) ? h : R.home;
+}
+function go(space){ if (location.hash.slice(1) === space) render(); else location.hash = space; }
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.hidden=false; clearTimeout(toast._t); toast._t=setTimeout(()=>t.hidden=true,2600); }
+
+/* ═════════ Navigation ═════════ */
+function navCount(space){
+  const list = TODO[st.role] || [];
+  const items = list.filter(x=>x.go===space);
+  if (!items.length) return '';
+  const hot = items.some(x=>x.sev==='crit');
+  return `<span class="cnt ${hot?'hot':''}">${items.reduce((a,x)=>a+x.n,0)}</span>`;
+}
+function renderNav(cur){
+  const R = ROLES[st.role];
+  const main = R.spaces.filter(s=>!['moi','admin'].includes(s));
+  const perso = R.spaces.filter(s=>['moi','admin'].includes(s));
+  const item = s => `<a href="#${s}" class="${s===cur?'on':''}" ${s===cur?'aria-current="page"':''}>${svg(s)}<span>${SPACES[s].label}<small>${SPACES[s].hint}</small></span>${navCount(s)}</a>`;
+  document.getElementById('nav').innerHTML =
+    (main.length ? `<div class="nav-label">Travail</div>${main.map(item).join('')}` : '') +
+    `<div class="nav-label">Personnel</div>${perso.map(item).join('')}`;
+  document.getElementById('auditNote').innerHTML =
+    `<b>${R.spaces.length} espace${R.spaces.length>1?'s':''}</b> pour le rôle ${R.label}.<br>${R.today}`;
+}
+
+/* ═════════ Écrans ═════════ */
+function why(items){ return `<details class="why"><summary>Ce qui change par rapport à l’app actuelle</summary><ul>${items.map(i=>`<li>${i}</li>`).join('')}</ul></details>`; }
+function tabs(space, list){
+  const cur = st.tab[space] || list[0][0];
+  return { cur, html:`<div class="tabs" role="tablist">${list.map(([k,l])=>`<button role="tab" aria-selected="${k===cur}" class="${k===cur?'on':''}" data-tab="${space}:${k}">${l}</button>`).join('')}</div>` };
+}
+function head(eyebrow, title, sub, right=''){ return `<div class="head"><div><div class="eyebrow">${eyebrow}</div><h1>${title}</h1>${sub?`<p>${sub}</p>`:''}</div>${right}</div>`; }
+
+function todoList(list){
+  return `<div class="todo">${list.map(x=>`<button data-go="${x.go}"><span class="sev ${x.sev}"></span><span class="n num">${x.n}</span><span><div class="t">${x.t}</div><div class="s">${x.s}</div></span><span class="go">Ouvrir →</span></button>`).join('')}</div>`;
+}
+
+function vAccueil(){
+  const R = ROLES[st.role];
+  const list = TODO[st.role] || [];
+  const recent = {
+    adv:['Fiche 360° · Hyper Nord-Ouest','AO promo · Halles du Grand Est','Commande CMD-26-04812','Article · Pot fraise 500 ml'],
+    compta:['Factures BV → EDI','Factures NIP · lot du 16/11','Relances · Marché des Côtes','Fiche 360° · Super Vallée'],
+    qualite:['Article · Bûche pistache 8 parts','Ingrédients · référentiel','Article · Mochi mangue ×12'],
+    logistique:['Stock · vue simple','Inventaire dépôt · allée C','Commandes du jour'],
+    admin:['Utilisateurs','Fiche 360° · Hyper Nord-Ouest','Factures NIP']
+  }[st.role] || [];
+  const short = {
+    adv:[['clients','Ouvrir une fiche client'],['ventes','Chercher des commandes par liste'],['produits','Trouver un article']],
+    compta:[['finance','Valider les factures BV'],['finance','Traiter les factures NIP'],['ventes','Chercher une commande']],
+    qualite:[['produits','Valider un article'],['produits','Compléter une fiche']],
+    logistique:[['logistique','Voir le stock'],['logistique','Lancer un inventaire']],
+    admin:[['admin','Gérer les droits'],['clients','Fiche 360°']]
+  }[st.role] || [];
+  return head('Mon poste · '+R.label, 'Bonjour, voici ce qui vous attend', 'Les tâches sont calculées à partir des modules existants. Rien à chercher dans le menu : un clic ouvre le bon écran.') +
+    why(['Aucune page d’accueil métier aujourd’hui : chaque rôle arrive sur la première page autorisée de la liste (Ventes, Articles…).',
+         'Les compteurs existent déjà dans l’app (articles en attente, factures NIP à traiter, alertes DLC, relances sans email) mais sont dispersés.',
+         'Le compteur rouge dans le menu reprend ces tâches : on voit d’un coup d’œil où aller.']) +
+    `<div class="grid split">
+      <section class="panel"><h2>À traiter <span class="chip mute">${list.reduce((a,x)=>a+x.n,0)} éléments</span></h2>${todoList(list)}</section>
+      <div class="grid">
+        <section class="panel"><h2>Raccourcis</h2><div class="filters">${short.map(([g,l])=>`<button class="btn ghost" data-go="${g}">${l}</button>`).join('')}</div></section>
+        <section class="panel"><h2>Ouverts récemment</h2><div class="todo">${recent.map(r=>`<button data-go="${r.startsWith('Fiche')||r.startsWith('AO')?'clients':r.startsWith('Article')||r.startsWith('Ingr')?'produits':r.startsWith('Comm')?'ventes':r.startsWith('Stock')||r.startsWith('Inv')?'logistique':r.startsWith('Util')?'admin':'finance'}" style="grid-template-columns:1fr auto"><span class="t">${r}</span><span class="go">→</span></button>`).join('')}</div></section>
+      </div>
+    </div>`;
+}
+
+function barChart(n, p, labels){
+  const W=640,H=210,padL=40,padB=26,padT=10;
+  const max = Math.ceil(Math.max(...n,...p)/50)*50;
+  const cw=(W-padL-10)/n.length, bw=Math.min(14,cw/3);
+  const y=v=>padT+(H-padT-padB)*(1-v/max);
+  let g='';
+  for(let t=0;t<=max;t+=max/4){ g+=`<line x1="${padL}" x2="${W-6}" y1="${y(t)}" y2="${y(t)}" stroke="var(--border)" stroke-width="1"/><text x="${padL-6}" y="${y(t)+4}" text-anchor="end" font-size="10" fill="var(--faint)">${Math.round(t)}</text>`; }
+  n.forEach((v,i)=>{ const x=padL+i*cw+cw/2;
+    g+=`<rect x="${x-bw-1}" y="${y(p[i])}" width="${bw}" height="${y(0)-y(p[i])}" rx="2" fill="var(--border)"/>`;
+    g+=`<rect x="${x+1}" y="${y(v)}" width="${bw}" height="${y(0)-y(v)}" rx="2" fill="var(--accent)"/>`;
+    g+=`<text x="${x}" y="${H-8}" text-anchor="middle" font-size="10" fill="var(--muted)">${labels[i]}</text>`; });
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="CA mensuel N et N-1 en k€">${g}</svg>
+    <div class="legend"><span><i style="background:var(--accent)"></i>2026 (k€)</span><span><i style="background:var(--border)"></i>2025 (k€)</span></div>`;
+}
+
+function cascade(a){
+  const net2 = a.r1+a.r2+a.r3, net3 = net2+a.coop, net4 = net3+a.promo, net5 = net4+a.frais+(canRfa()?a.rfa:0);
+  const rfaCell = canRfa() ? `<div class="v num">${pct(a.rfa)}</div>` : `<div class="v"><span class="locked">${LOCK} Réservé</span></div>`;
+  return `<div class="cascade">
+    <div class="step"><div class="l">R1 CGV</div><div class="v num">${pct(a.r1)}</div></div>
+    <div class="step"><div class="l">R2 CPV</div><div class="v num">${pct(a.r2)}</div></div>
+    <div class="step"><div class="l">R3 Autres</div><div class="v num">${pct(a.r3)}</div></div>
+    <div class="step"><div class="l">2NET</div><div class="v num">${pct(net2)}</div></div>
+    <div class="step"><div class="l">COOP</div><div class="v num">${pct(a.coop)}</div></div>
+    <div class="step total"><div class="l">3NET</div><div class="v num">${pct(net3)}</div></div>
+    <div class="step"><div class="l">RFA à date</div>${rfaCell}</div>
+    <div class="step"><div class="l">4NET</div><div class="v num">${pct(net4)}</div></div>
+    <div class="step total"><div class="l">5NET</div><div class="v num">${pct(net5)}</div></div>
+  </div>
+  <p class="note">${canRfa()
+    ? 'La RFA est visible pour votre compte et entre dans le 5NET.'
+    : 'La RFA reste réservée. Elle s’affiche « Réservé » au lieu d’un « — » qui laissait croire à une absence de RFA, et plus aucun message d’erreur n’apparaît.'}</p>`;
+}
+
+function vClients(){
+  const e = ensById(st.ens), a = ACCORDS[e.id], m = CA_M[e.id];
+  const siblings = ENSEIGNES.filter(x=>x.groupe===e.groupe);
+  const isGroup = st.level==='groupe';
+  const scope = isGroup ? siblings : [e];
+  const ca = scope.reduce((s,x)=>s+x.ca,0), n1 = scope.reduce((s,x)=>s+x.n1,0), obj = scope.reduce((s,x)=>s+x.obj,0), pen = scope.reduce((s,x)=>s+x.pen,0);
+  const t = tabs('clients', [['synthese','Synthèse'],['accord','Accord & remises'],['promo','AO promo'],['commandes','Commandes'],['litiges','Pénalités'],['terrain','Terrain'],['contacts','Contacts']]);
+  const sel = `<div class="filters"><select id="ensSel" aria-label="Choisir une enseigne">${ENSEIGNES.map(x=>`<option value="${x.id}" ${x.id===e.id?'selected':''}>${x.nom}</option>`).join('')}</select>
+    <div class="seg" role="group" aria-label="Niveau"><button class="${!isGroup?'on':''}" data-level="enseigne">Enseigne</button><button class="${isGroup?'on':''}" data-level="groupe">Groupe</button></div></div>`;
+  let body='';
+  if (t.cur==='synthese'){
+    const mm = isGroup ? m.n.map((_,i)=>siblings.reduce((s,x)=>s+CA_M[x.id].n[i],0)) : m.n;
+    const pp = isGroup ? m.p.map((_,i)=>siblings.reduce((s,x)=>s+CA_M[x.id].p[i],0)) : m.p;
+    body = `<div class="grid g4">
+      <div class="kpi"><span class="l">CA 2026 à date</span><span class="v num">${keur(ca)}</span><span class="d">${evo(ca,n1)} vs 2025 à date</span></div>
+      <div class="kpi"><span class="l">Objectif accord</span><span class="v num">${Math.round(ca/obj*100)} %</span><div class="bar"><i class="${ca/obj<.7?'w':''}" style="width:${Math.min(100,ca/obj*100)}%"></i></div></div>
+      <div class="kpi"><span class="l">Pénalités 2026</span><span class="v num">${keur(pen)}</span><span class="d">${(pen/ca*100).toLocaleString('fr-FR',{maximumFractionDigits:2})} % du CA</span></div>
+      <div class="kpi"><span class="l">DN moyenne</span><span class="v num">${isGroup?Math.round(siblings.reduce((s,x)=>s+x.dn,0)/siblings.length):e.dn} %</span><span class="d">${scope.reduce((s,x)=>s+x.mag,0)} magasins</span></div>
+    </div>
+    <div class="grid split">
+      <section class="panel"><h2>CA mensuel</h2>${barChart(mm,pp,MONTHS)}</section>
+      <section class="panel"><h2>Points d’attention</h2><div class="todo">
+        ${ca<n1?`<button data-tab="clients:commandes" style="grid-template-columns:4px 1fr"><span class="sev crit"></span><span><div class="t">CA en recul sur l’année</div><div class="s">${evo(ca,n1)} par rapport à 2025 à la même date</div></span></button>`:''}
+        <button data-tab="clients:litiges" style="grid-template-columns:4px 1fr"><span class="sev warn"></span><span><div class="t">2 pénalités ouvertes</div><div class="s">Taux de service livraison et retard de quai</div></span></button>
+        <button data-tab="clients:promo" style="grid-template-columns:4px 1fr"><span class="sev ok"></span><span><div class="t">1 opération promo en cours</div><div class="s">Semaine 47 · 3 références</div></span></button>
+      </div></section>
+    </div>`;
+  } else if (t.cur==='accord'){
+    body = `<section class="panel"><h2>Accord ${a.cat} ${a.debut.slice(-4)} <span class="chip ${a.statut==='Signé'?'pos':'warn'}">${a.statut}</span></h2>
+      <div class="grid g3" style="margin-bottom:14px">
+        <div><div class="code">Période</div><div>${a.debut} → ${a.fin}</div></div>
+        <div><div class="code">Objectif CA</div><div class="num">${eur(e.obj)}</div></div>
+        <div><div class="code">CA à date</div><div class="num">${eur(e.ca)} · ${Math.round(e.ca/e.obj*100)} %</div></div>
+      </div>${cascade(a)}</section>`;
+  } else if (t.cur==='promo'){
+    body = `<div class="tbl"><table><thead><tr><th>Opération</th><th>Période</th><th class="r">Références</th><th class="r">Commandes rattachées</th><th>Statut</th></tr></thead><tbody>
+      <tr><td>Fête des glaces</td><td>S47 · 17 → 23/11</td><td class="r num">3</td><td class="r num">4</td><td><span class="chip info">En cours</span></td></tr>
+      <tr><td>Desserts de fin d’année</td><td>S51 · 15 → 21/12</td><td class="r num">5</td><td class="r num">0</td><td><span class="chip mute">À venir</span></td></tr>
+      <tr><td>Rentrée gourmande</td><td>S37 · 08 → 14/09</td><td class="r num">2</td><td class="r num">6</td><td><span class="chip pos">Clôturée</span></td></tr>
+    </tbody></table></div><p class="note">Les commandes rattachées s’affichent pour tous les détenteurs du droit AO. Aujourd’hui la liste est vide, avec une erreur, pour la plupart des ADV.</p>`;
+  } else if (t.cur==='commandes'){
+    const rows = COMMANDES.filter(c=>scope.some(x=>x.id===c.ens));
+    body = rows.length ? cmdTable(rows) : `<section class="panel"><p class="note" style="margin:0">Aucune commande sur les 7 derniers jours pour ce périmètre.</p></section>`;
+  } else if (t.cur==='litiges'){
+    body = `<div class="tbl"><table><thead><tr><th>Motif</th><th>Reçue</th><th class="r">Montant</th><th>Échéance contestation</th><th>Statut</th></tr></thead><tbody>
+      <tr><td>Taux de service livraison</td><td>04/11</td><td class="r num">${eur(1840)}</td><td>19/11 <span class="chip neg">J-2</span></td><td><span class="chip warn">À contester</span></td></tr>
+      <tr><td>Retard de quai</td><td>28/10</td><td class="r num">${eur(620)}</td><td>27/11</td><td><span class="chip warn">À contester</span></td></tr>
+      <tr><td>Rupture promo</td><td>02/10</td><td class="r num">${eur(2310)}</td><td>—</td><td><span class="chip pos">Contestée · gagnée</span></td></tr>
+    </tbody></table></div>`;
+  } else if (t.cur==='terrain'){
+    body = `<div class="grid g3">
+      <div class="kpi"><span class="l">Magasins visités (4 sem.)</span><span class="v num">${Math.round(e.mag*.38)}</span><span class="d">sur ${e.mag}</span></div>
+      <div class="kpi"><span class="l">Ruptures relevées</span><span class="v num">11</span><span class="d">dont 4 sur l’assortiment obligatoire</span></div>
+      <div class="kpi"><span class="l">Prix moyen constaté</span><span class="v num">4,29 €</span><span class="d">Cône vanille ×4</span></div></div>
+      <p class="note">Le détail magasin par magasin reste dans l’espace Terrain. Ici, uniquement ce qui sert à la négociation.</p>`;
+  } else {
+    body = `<div class="tbl"><table><thead><tr><th>Fonction</th><th>Contact</th><th>Dernier échange</th></tr></thead><tbody>
+      <tr><td>Acheteur glaces</td><td>Contact fictif A</td><td>12/11 · revue d’assortiment</td></tr>
+      <tr><td>Assistante achats</td><td>Contact fictif B</td><td>06/11 · relance tarif 2027</td></tr>
+      <tr><td>Comptabilité fournisseurs</td><td>Contact fictif C</td><td>30/10 · avoir promo</td></tr>
+    </tbody></table></div><p class="note">Les contacts quittent leur page à part (5 ouvertures en 60 jours) et rejoignent la fiche où on en a besoin.</p>`;
+  }
+  return head('Clients', 'Fiche 360°', null, sel) +
+    why(['Fiche Enseigne et Fiche Groupe deviennent une seule fiche, avec un sélecteur de niveau.',
+         'Accords, AO promo, contrats, contacts et pénalités sont des onglets de la fiche. Il n’y a plus de pages séparées à retrouver dans le menu.',
+         'La RFA affiche « Réservé » au lieu d’une erreur (correctif proposé dans l’audit, lot 1).',
+         'Aujourd’hui : 3,2 s par appel en moyenne pour ouvrir une fiche. La synthèse doit apparaître d’abord, le détail des onglets se charge au clic.']) +
+    `<section class="panel"><div class="ident"><div class="mono">${e.nom[0]}</div><div><div class="crumb"><button data-level="groupe">${e.groupe}</button><span>›</span><span>${isGroup?'toutes les enseignes ('+siblings.length+')':e.nom}</span></div>
+      <h2 style="font-family:var(--f-display);font-weight:400;font-size:24px;margin:2px 0 0">${isGroup?e.groupe:e.nom}</h2>
+      <div class="code">${isGroup?siblings.map(x=>x.nom).join(' · '):e.niveau+' · '+e.mag+' magasins'}</div></div></div></section>` +
+    t.html + body;
+}
+
+function cmdTable(rows){
+  const tone = s => s==='Livrée'?'pos':s==='Expédiée'?'info':s==='Confirmée'?'mute':'warn';
+  return `<div class="tbl"><table><thead><tr><th>Commande</th><th>Réf. client</th><th>Enseigne</th><th>Date</th><th class="r">Colis</th><th class="r">Montant HT</th><th>Statut</th></tr></thead><tbody>
+    ${rows.map(c=>`<tr><td class="num">${c.num}</td><td class="code">${c.ref}</td><td>${ensById(c.ens).nom}</td><td>${c.date}</td><td class="r num">${c.colis}</td><td class="r num">${eur(c.montant)}</td><td><span class="chip ${tone(c.statut)}">${c.statut}</span></td></tr>`).join('')}
+  </tbody></table></div>`;
+}
+
+function vVentes(){
+  const t = tabs('ventes', [['ca','Ventes CA'],['commandes','Commandes'],['discount','Aldi & Lidl']]);
+  const tot = ENSEIGNES.reduce((s,x)=>s+x.ca,0), totp = ENSEIGNES.reduce((s,x)=>s+x.n1,0);
+  let body='';
+  if (t.cur==='ca'){
+    const sorted=[...ENSEIGNES].sort((a,b)=>b.ca-a.ca);
+    body = `<div class="grid g3">
+      <div class="kpi"><span class="l">CA 2026 à date</span><span class="v num">${keur(tot)}</span><span class="d">${evo(tot,totp)} vs 2025 à date</span></div>
+      <div class="kpi"><span class="l">Colis facturés</span><span class="v num">412 860</span><span class="d"><span class="up">+5,2 %</span></span></div>
+      <div class="kpi"><span class="l">Carnet de commandes</span><span class="v num">186 k€</span><span class="d">à livrer sous 15 jours</span></div></div>
+      <div class="tbl"><table><thead><tr><th>Enseigne</th><th>Groupe</th><th class="r">CA 2026</th><th class="r">Évolution</th><th>Poids</th></tr></thead><tbody>
+      ${sorted.map(x=>`<tr><td><button class="link" style="background:none;border:0;color:var(--accent);padding:0" data-ens="${x.id}">${x.nom}</button></td><td>${x.groupe}</td><td class="r num">${keur(x.ca)}</td><td class="r num">${evo(x.ca,x.n1)}</td><td><div class="bar"><i style="width:${x.ca/sorted[0].ca*100}%"></i></div></td></tr>`).join('')}
+      </tbody></table></div><p class="note">Cliquer une enseigne ouvre sa fiche 360°.</p>`;
+  } else if (t.cur==='commandes'){
+    body = `<section class="panel"><h2>Recherche</h2>
+      <div class="filters"><div class="seg" role="group"><button class="on">Une commande</button><button data-toast="Mode liste : coller plusieurs références (une par ligne), comme la page Recherche Commandes actuelle.">Coller une liste</button></div>
+      <span class="note" style="margin:0">Réf. client, n° de commande ou n° de facture.</span></div></section>` + cmdTable(COMMANDES);
+  } else {
+    body = `<div class="grid g2"><section class="panel"><h2>Commandes Lidl <span class="chip info">automatique</span></h2><p class="note" style="margin:0">Mails lus, EDI déposé, intégration confirmée. 3 commandes intégrées cette semaine, aucune en échec.</p></section>
+      <section class="panel"><h2>Aldi · dépôt logisticiens</h2><p class="note" style="margin:0">2 factures déposées sur SharePoint aujourd’hui. Aucune en attente.</p></section></div>`;
+  }
+  return head('Ventes & Commandes', t.cur==='ca'?'Ventes CA':t.cur==='commandes'?'Commandes':'Aldi & Lidl', null) +
+    why(['Commandes et Recherche Commandes ne font plus qu’une page, avec deux modes de recherche.',
+         'Aujourd’hui, Ventes CA est la page la plus régulière : ouverte 56 jours sur 60 par 15 personnes. Elle ne bouge pas.',
+         'La Vue simple des ventes, bloquée depuis le 28/07, disparaît du menu au lieu de rediriger sans rien dire.']) + t.html + body;
+}
+
+function vProduits(){
+  const t = tabs('produits', [['articles','Articles'],['validation','À valider'],['ingredients','Ingrédients'],['marche','Marché & forecast']]);
+  const fams = ['Toutes',...new Set(ARTICLES.map(a=>a.fam))];
+  const tone = s => s==='Validé'?'pos':s==='À valider'?'warn':'neg';
+  let body='';
+  if (t.cur==='articles' || t.cur==='validation'){
+    let rows = ARTICLES.filter(a=>st.fam==='Toutes'||a.fam===st.fam);
+    if (t.cur==='validation') rows = ARTICLES.filter(a=>a.statut!=='Validé');
+    body = (t.cur==='articles'?`<div class="filters">${fams.map(f=>`<button class="fchip ${f===st.fam?'on':''}" data-fam="${f}">${f}</button>`).join('')}</div>`:'') +
+      `<div class="tbl"><table><thead><tr><th>Code</th><th>Article</th><th>Famille</th><th>Complétude</th><th>GTIN</th><th>Statut</th>${t.cur==='validation'&&st.role!=='direction'?'<th></th>':''}</tr></thead><tbody>
+      ${rows.map(a=>`<tr><td class="code">${a.code}</td><td>${a.nom}</td><td>${a.fam}</td><td><div style="display:flex;gap:8px;align-items:center"><div class="bar" style="flex:1"><i class="${a.comp<70?'c':a.comp<90?'w':'p'}" style="width:${a.comp}%"></i></div><span class="num" style="font-size:12px">${a.comp} %</span></div></td>
+        <td>${a.gtin?'<span class="chip pos">OK</span>':'<span class="chip neg">Manquant</span>'}</td><td><span class="chip ${tone(a.statut)}">${a.statut}</span></td>
+        ${t.cur==='validation'&&st.role!=='direction'?`<td>${a.statut==='À valider'&&['qualite','admin'].includes(st.role)?'<button class="btn" data-toast="Article validé (maquette).">Valider</button>':'<span class="code">à compléter</span>'}</td>`:''}</tr>`).join('')}
+      </tbody></table></div>`;
+  } else if (t.cur==='ingredients'){
+    body = `<section class="panel"><h2>Référentiel ingrédients <span class="chip warn">6 sans allergènes</span></h2><p class="note" style="margin:0">Page inchangée, rangée avec les articles qu’elle alimente.</p></section>`;
+  } else {
+    body = `<div class="grid g2">
+      <section class="panel"><h2>Forecast produits</h2><p class="note" style="margin:0">Prévisions et tenders MDD.</p></section>
+      <section class="panel"><h2>Assortiments</h2><p class="note" style="margin:0">Assortiment par centrale et par strate.</p></section>
+      <section class="panel"><h2>Études de marché</h2><p class="note" style="margin:0">Parts de marché et manque à gagner.</p></section>
+      <section class="panel"><h2>Licences & salons</h2><p class="note" style="margin:0">Rapports licenceurs, préparation PLMA.</p></section></div>`;
+  }
+  return head('Produits', t.cur==='validation'?'Articles à valider':'Catalogue articles', 'Premier usage de l’app : 18 personnes, tous métiers confondus.') +
+    why(['Articles, validation, recettes et ingrédients restent ensemble : c’est le parcours Qualité, déjà adopté à 100 %.',
+         'Forecast, Assortiments, Circana, Licences et PLMA sortent du groupe « Référencement produits », qui mélangeait cinq publics, et passent dans un onglet « Marché ».',
+         'La recherche article (Ctrl K) devient une recherche globale. Elle n’apparaît qu’aux comptes qui ont le droit articles.']) + t.html + body;
+}
+
+function vLogistique(){
+  const t = tabs('logistique', [['stock','Stock'],['dluo','Alertes DLUO'],['inventaire','Inventaire dépôt']]);
+  let body='';
+  if (t.cur==='stock'){
+    const det = st.stockView==='detail';
+    body = `<div class="filters"><div class="seg" role="group" aria-label="Vue"><button class="${!det?'on':''}" data-stock="simple">Vue simple</button><button class="${det?'on':''}" data-stock="detail">Vue détaillée</button></div>
+      <span class="note" style="margin:0">${det?'Par stockeur, avec les bloqués et la DLUO.':'Ce qu’on peut vendre, en colis.'}</span></div>
+      <div class="tbl"><table><thead><tr><th>Article</th><th class="r">Disponible (colis)</th>${det?'<th>Stockeur</th><th class="r">Bloqué</th><th>DLUO la plus proche</th>':''}<th>État</th></tr></thead><tbody>
+      ${ARTICLES.filter(a=>a.stk!=='—').map(a=>`<tr><td>${a.nom}<div class="code">${a.code}</div></td><td class="r num">${a.stock.toLocaleString('fr-FR')}</td>
+        ${det?`<td>${a.stk}</td><td class="r num">${a.stock>1000?24:0}</td><td>${a.dluo}</td>`:''}
+        <td>${a.stock<100?'<span class="chip neg">Bas</span>':a.stock<400?'<span class="chip warn">À surveiller</span>':'<span class="chip pos">OK</span>'}</td></tr>`).join('')}
+      </tbody></table></div>`;
+  } else if (t.cur==='dluo'){
+    body = `<div class="tbl"><table><thead><tr><th>Article</th><th>Stockeur</th><th class="r">Colis</th><th>DLUO</th><th></th></tr></thead><tbody>
+      <tr><td>Sorbet citron 1 L</td><td>Plateforme Sud</td><td class="r num">95</td><td>30/12/2026</td><td><span class="chip neg">J-43</span></td></tr>
+      <tr><td>Pot café 1 L</td><td>Plateforme Sud</td><td class="r num">410</td><td>11/12/2026</td><td><span class="chip neg">J-24</span></td></tr>
+    </tbody></table></div>`;
+  } else {
+    body = `<div class="grid split"><section class="panel"><h2>Inventaire en cours · Dépôt froid Centre</h2>
+      <div class="grid g3"><div class="kpi"><span class="l">Emplacements scannés</span><span class="v num">62 %</span><div class="bar"><i style="width:62%"></i></div></div>
+      <div class="kpi"><span class="l">Palettes SSCC</span><span class="v num">318</span><span class="d">dont 6 écarts</span></div>
+      <div class="kpi"><span class="l">Temps par scan</span><span class="v num">< 1 s</span><span class="d">objectif, contre 3,3 s aujourd’hui</span></div></div></section>
+      <section class="panel"><h2>Sur le terminal</h2><div class="phone"><div class="code">Allée C · emplacement 14</div><div class="scan">Scanner une palette</div><div class="big num">C-14</div><button class="btn">Emplacement suivant</button></div></section></div>`;
+  }
+  return head('Logistique', t.cur==='stock'?'Stock':t.cur==='dluo'?'Alertes DLUO':'Inventaire dépôt', null) +
+    why(['Logistique et Stock simple deviennent une seule page avec un sélecteur de vue. Les deux sont utilisées aujourd’hui (17 et 16 personnes) : on garde les deux usages.',
+         'L’inventaire dépôt est la seule page vraiment utilisée sur mobile. Elle garde une version terminal dédiée.',
+         'Elle n’apparaît plus dans le menu des 12 personnes qui la voient sans s’en servir.']) + t.html + body;
+}
+
+function vFinance(){
+  const ro = isReadOnly();
+  const lane = (title, n, cards) => `<section class="lane"><h3>${title}<span class="chip mute">${n}</span></h3>${cards.join('')}</section>`;
+  const card = (a, amt, b, chip) => `<div class="card"><div class="a"><span>${a}</span><span class="num">${amt}</span></div><div class="b"><span>${b}</span>${chip||''}</div></div>`;
+  return head('Finance & Litiges', 'Ce qui attend une action', ro?'Lecture seule pour votre rôle.':'Une colonne par flux, triée par urgence.') +
+    why(['Factures NIP, Pénalités, Relances et Factures BV étaient dans quatre groupes du menu différents. Ils partagent pourtant le même geste : traiter une pièce avant échéance.',
+         'La configuration des pénalités (11 personnes la voient, 2 l’ouvrent) passe dans Administration.',
+         'Aujourd’hui, 9 envois de relances ont échoué le 03/11. Un échec d’envoi doit rester visible ici tant qu’il n’est pas repris.']) +
+    `<div class="lanes">
+      ${lane('Factures NIP', 18, [card('Hyper Nord-Ouest','4 820 €','Rapprochée compta','<span class="chip pos">auto</span>'), card('Halles du Grand Est','2 310 €','N° à vérifier','<span class="chip warn">à l’œil</span>'), card('Super Vallée','960 €','Mandat manquant','<span class="chip neg">bloquée</span>')])}
+      ${lane('Pénalités', 3, [card('Super Vallée','1 840 €','Contester avant le 19/11','<span class="chip neg">J-2</span>'), card('Hyper Nord-Ouest','620 €','Contester avant le 27/11','<span class="chip warn">J-10</span>')])}
+      ${lane('Relances impayés', 9, [card('Marché des Côtes','12 480 €','Prête à envoyer','<span class="chip info">prête</span>'), card('Proxi Littoral','3 120 €','Email manquant','<span class="chip neg">bloquée</span>'), card('Client export','6 900 €','Envoi échoué le 03/11','<span class="chip neg">à reprendre</span>')])}
+      ${lane('Factures BV → EDI', 7, [card('VFA2600241','18 200 €','À valider','<span class="chip warn">J+3</span>'), card('VFA2600238','7 640 €','EDI généré, dépôt FTP en attente','<span class="chip info">en cours</span>')])}
+    </div>`;
+}
+
+function vTerrain(){
+  const t = tabs('terrain', [['visites','Visites'],['dn','DN & assortiment'],['prix','Prix en rayon'],['magasin','Fiche magasin']]);
+  const rows = {
+    visites:[['Semaine 47','38 prévues','31 faites','<span class="chip warn">7 en retard</span>'],['Semaine 46','41 prévues','40 faites','<span class="chip pos">OK</span>']],
+    dn:[['Assortiment obligatoire','Hyper Nord-Ouest','86 %','<span class="chip pos">OK</span>'],['Assortiment obligatoire','Marché des Côtes','61 %','<span class="chip neg">sous objectif</span>']],
+    prix:[['Cône vanille ×4','4,29 € moyen','3,99 → 4,79 €','<span class="chip mute">18 relevés</span>'],['Bâtonnet chocolat ×6','5,10 € moyen','4,85 → 5,49 €','<span class="chip mute">22 relevés</span>']],
+    magasin:[['Hyper Nord-Ouest · Rennes Est','Dernière visite 12/11','2 ruptures','<span class="chip warn">à revoir</span>']]
+  }[t.cur];
+  return head('Terrain', 'Force de vente', 'Données ECOS. Consultées au bureau aujourd’hui (aucun usage mobile mesuré).') +
+    why(['Les quatre pages ECOS (ECOS, DN & assortiment, Prix en rayon, Fiche magasin) deviennent quatre onglets d’un seul espace.',
+         'Le chiffre utile à la négociation remonte aussi dans la fiche client (onglet Terrain).']) +
+    t.html + `<div class="tbl"><table><tbody>${rows.map(r=>`<tr>${r.map((c,i)=>`<td class="${i===2?'num':''}">${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+}
+
+function vDirection(){
+  const tot = ENSEIGNES.reduce((s,x)=>s+x.ca,0), totp = ENSEIGNES.reduce((s,x)=>s+x.n1,0), obj = ENSEIGNES.reduce((s,x)=>s+x.obj,0), pen=ENSEIGNES.reduce((s,x)=>s+x.pen,0);
+  const nAll = MONTHS.map((_,i)=>ENSEIGNES.reduce((s,x)=>s+CA_M[x.id].n[i],0)), pAll = MONTHS.map((_,i)=>ENSEIGNES.reduce((s,x)=>s+CA_M[x.id].p[i],0));
+  return head('Direction', 'Synthèse commerciale', 'Lecture seule. Chaque chiffre ouvre l’écran détaillé correspondant.') +
+    why(['La Vue Direction actuelle est bloquée depuis le 28/07, et le compte direction ne s’est pas connecté en 30 jours.',
+         'Cette page d’accueil reprend des calculs déjà fiabilisés ailleurs (Ventes CA, Accords, Pénalités, Stock) plutôt que d’en refaire.']) +
+    `<div class="grid g4">
+      <div class="kpi"><span class="l">CA 2026 à date</span><span class="v num">${keur(tot)}</span><span class="d">${evo(tot,totp)} vs 2025</span></div>
+      <div class="kpi"><span class="l">Atteinte objectifs accords</span><span class="v num">${Math.round(tot/obj*100)} %</span><div class="bar"><i style="width:${tot/obj*100}%"></i></div></div>
+      <div class="kpi"><span class="l">Pénalités 2026</span><span class="v num">${keur(pen)}</span><span class="d">${(pen/tot*100).toLocaleString('fr-FR',{maximumFractionDigits:2})} % du CA</span></div>
+      <div class="kpi"><span class="l">Stock vendable</span><span class="v num">6 820</span><span class="d">colis · 2 alertes DLUO</span></div></div>
+    <div class="grid split"><section class="panel"><h2>CA mensuel, toutes enseignes</h2>${barChart(nAll,pAll,MONTHS)}</section>
+      <section class="panel"><h2>Enseignes à suivre <button class="link" data-go="clients">Fiches 360° →</button></h2><div class="todo">
+        ${[...ENSEIGNES].sort((a,b)=>(a.ca/a.n1)-(b.ca/b.n1)).slice(0,3).map(x=>`<button data-ens="${x.id}" style="grid-template-columns:1fr auto"><span><div class="t">${x.nom}</div><div class="s">${x.groupe} · objectif ${Math.round(x.ca/x.obj*100)} %</div></span><span class="num">${evo(x.ca,x.n1)}</span></button>`).join('')}
+      </div></section></div>`;
+}
+
+function vMoi(){
+  const days=[['Lun 17','Bureau','08:30 → 17:15',true],['Mar 18','Bureau','',false],['Mer 19','Télétravail','',false],['Jeu 20','Bureau','',false],['Ven 21','Congé','',false]];
+  return head('Mon espace', 'Ma semaine', 'Mes présences et mon dossier RH. Je ne vois que mes propres informations.') +
+    why(['« RH — Salariés » devient « Mon dossier RH » : 27 personnes voient l’entrée, mais chacune n’y trouve que sa propre fiche. L’ancien nom faisait penser à un annuaire.',
+         'Pour les comptes salarié (7 comptes, 5 jamais connectés), c’est la seule page. Elle doit se suffire à elle-même sur téléphone.']) +
+    `<section class="panel"><h2>Présences · semaine 47</h2><div class="week">${days.map(d=>`<div class="day ${d[3]?'today':''}"><span class="dn">${d[0]}</span><span>${d[1]}</span><span class="code">${d[2]}</span></div>`).join('')}</div></section>
+     <section class="panel"><h2>Mon dossier RH</h2><div class="tbl"><table><thead><tr><th>Document</th><th>Date</th></tr></thead><tbody>
+       <tr><td>Bulletin de paie · octobre 2026</td><td>31/10/2026</td></tr><tr><td>Attestation mutuelle</td><td>12/09/2026</td></tr><tr><td>Avenant télétravail</td><td>01/07/2026</td></tr>
+     </tbody></table></div></section>`;
+}
+
+function vAdmin(){
+  const rows=[['ADV','8','7 espaces','12 exceptions individuelles'],['Comptabilité','2','5 espaces','2 périmètres différents'],['Qualité','3','3 espaces','—'],['Logistique','2','4 espaces','—'],['Direction','1','5 espaces, lecture seule','—'],['Salarié','7','1 espace','5 comptes jamais connectés']];
+  return head('Administration', 'Rôles et espaces', 'Un rôle donne un ensemble d’espaces. Les exceptions individuelles redeviennent rares.') +
+    why(['Aujourd’hui, 171 exceptions individuelles. C’est ce qui produit des écrans à moitié autorisés.',
+         'Les paramétrages (configuration des pénalités, mapping pays BV) et la Wishbox se rangent ici.']) +
+    `<div class="tbl"><table><thead><tr><th>Rôle</th><th class="r">Comptes</th><th>Espaces</th><th>Remarque</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r[0]}</td><td class="r num">${r[1]}</td><td>${r[2]}</td><td class="code">${r[3]}</td></tr>`).join('')}</tbody></table></div>
+    <div class="grid g3"><section class="panel"><h2>Paramètres pénalités</h2><p class="note" style="margin:0">Motifs, modèles de mail.</p></section><section class="panel"><h2>Mapping pays BV</h2><p class="note" style="margin:0">Correspondances pays et TVA.</p></section><section class="panel"><h2>Wishbox</h2><p class="note" style="margin:0">Ouverte à tous en dépôt, pour faire remonter les irritants.</p></section></div>`;
+}
+
+const VIEWS = {accueil:vAccueil, clients:vClients, ventes:vVentes, produits:vProduits, logistique:vLogistique, finance:vFinance, terrain:vTerrain, direction:vDirection, moi:vMoi, admin:vAdmin};
+
+function render(){
+  const cur = route();
+  renderNav(cur);
+  document.getElementById('page').innerHTML = VIEWS[cur]();
+  document.getElementById('side').classList.remove('open');
+  const es = document.getElementById('ensSel');
+  if (es) es.addEventListener('change', e=>{ st.ens=e.target.value; render(); });
+}
+
+/* ═════════ Interactions ═════════ */
+document.addEventListener('click', e=>{
+  const b = e.target.closest('[data-go],[data-tab],[data-level],[data-fam],[data-stock],[data-ens],[data-toast]');
+  if (!b) return;
+  if (b.dataset.toast){ toast(b.dataset.toast); return; }
+  if (b.dataset.ens){ st.ens=b.dataset.ens; st.level='enseigne'; st.tab.clients='synthese'; if (!ROLES[st.role].spaces.includes('clients')) { toast('Votre rôle n’a pas accès aux fiches clients.'); return; } go('clients'); return; }
+  if (b.dataset.go){ if (!ROLES[st.role].spaces.includes(b.dataset.go)) { toast('Cet espace n’est pas ouvert pour votre rôle.'); return; } go(b.dataset.go); return; }
+  if (b.dataset.tab){ const [s,k]=b.dataset.tab.split(':'); st.tab[s]=k; render(); return; }
+  if (b.dataset.level){ st.level=b.dataset.level; render(); return; }
+  if (b.dataset.fam){ st.fam=b.dataset.fam; render(); return; }
+  if (b.dataset.stock){ st.stockView=b.dataset.stock; render(); return; }
+});
+window.addEventListener('hashchange', render);
+
+const roleSel = document.getElementById('roleSel');
+roleSel.innerHTML = Object.entries(ROLES).map(([k,r])=>`<option value="${k}" ${k===st.role?'selected':''}>${r.label}</option>`).join('');
+roleSel.addEventListener('change', e=>{
+  st.role = e.target.value;
+  try { localStorage.setItem('yt-maquette-role', st.role); } catch(err){}
+  const R = ROLES[st.role];
+  if (!R.spaces.includes(location.hash.slice(1))) location.hash = R.home; else render();
+  toast('Vue de l’app pour le rôle ' + R.label + ' : ' + R.spaces.length + ' espace' + (R.spaces.length>1?'s':'') + '.');
+});
+
+document.getElementById('burger').addEventListener('click', ()=>document.getElementById('side').classList.toggle('open'));
+
+// Thème : sombre par défaut (charte Yetigel), bascule manuelle
+function applyTheme(t){
+  document.documentElement.setAttribute('data-theme', t);
+  document.getElementById('themeLbl').textContent = t==='dark' ? 'Clair' : 'Sombre';
+}
+let theme = 'dark';
+try { theme = localStorage.getItem('yt-maquette-theme') || 'dark'; } catch(e){}
+applyTheme(theme);
+document.getElementById('themeBtn').addEventListener('click', ()=>{
+  theme = theme==='dark' ? 'light' : 'dark'; applyTheme(theme);
+  try { localStorage.setItem('yt-maquette-theme', theme); } catch(e){}
+});
+
+// Recherche globale
+const q = document.getElementById('q'), res = document.getElementById('results');
+let selIdx = 0, hits = [];
+function searchAll(s){
+  s = s.toLowerCase().trim(); if (!s) return [];
+  const R = ROLES[st.role].spaces;
+  const out = [];
+  if (R.includes('produits') || R.includes('logistique')) ARTICLES.forEach(a=>{ if ((a.code+' '+a.nom+' '+a.fam).toLowerCase().includes(s)) out.push({kind:'Article', label:a.nom, sub:a.code, go: R.includes('produits')?'produits':'logistique'}); });
+  if (R.includes('clients')) ENSEIGNES.forEach(x=>{ if ((x.nom+' '+x.groupe).toLowerCase().includes(s)) out.push({kind:'Client', label:x.nom, sub:x.groupe, ens:x.id}); });
+  if (R.includes('ventes')) COMMANDES.forEach(c=>{ if ((c.num+' '+c.ref).toLowerCase().includes(s)) out.push({kind:'Commande', label:c.num, sub:c.ref, go:'ventes', tab:'commandes'}); });
+  return out.slice(0,8);
+}
+function showResults(){
+  hits = searchAll(q.value);
+  if (!q.value.trim()){ res.hidden = true; return; }
+  res.hidden = false;
+  res.innerHTML = hits.length ? hits.map((h,i)=>`<button class="${i===selIdx?'sel':''}" data-i="${i}"><span class="kind">${h.kind}</span><span>${h.label}</span><span class="code">${h.sub}</span></button>`).join('')
+    : `<div class="empty">Rien trouvé dans les espaces ouverts à votre rôle. Essayez « cône », « Altis » ou « CMD-26 ».</div>`;
+}
+function openHit(h){
+  if (!h) return; res.hidden = true; q.value = '';
+  if (h.ens){ st.ens=h.ens; st.level='enseigne'; st.tab.clients='synthese'; go('clients'); }
+  else { if (h.tab) st.tab[h.go]=h.tab; go(h.go); }
+}
+q.addEventListener('input', ()=>{ selIdx=0; showResults(); });
+q.addEventListener('keydown', e=>{
+  if (e.key==='ArrowDown'){ selIdx=Math.min(selIdx+1,hits.length-1); showResults(); e.preventDefault(); }
+  else if (e.key==='ArrowUp'){ selIdx=Math.max(selIdx-1,0); showResults(); e.preventDefault(); }
+  else if (e.key==='Enter'){ openHit(hits[selIdx]); }
+  else if (e.key==='Escape'){ res.hidden=true; q.blur(); }
+});
+res.addEventListener('click', e=>{ const b=e.target.closest('[data-i]'); if (b) openHit(hits[+b.dataset.i]); });
+document.addEventListener('click', e=>{ if (!e.target.closest('.search')) res.hidden = true; });
+window.addEventListener('keydown', e=>{ if ((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='k'){ e.preventDefault(); q.focus(); } });
+
+render();
+</script>
+</body>
+</html>
